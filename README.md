@@ -1,9 +1,9 @@
 # Island City Pathfinder
-```sh Scripts/runAllIrregular```
+Irregular Mesh Example
 
-<img src = "images/irregular.png" width ="400">
+<img src = "images/irregular.png" width ="600">
 
-```sh Scripts/runTropicalExample```
+Tropical Island Example
 
 <img src ="images/tropical.png" width ="400">
 
