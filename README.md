@@ -5,7 +5,7 @@
 
 ```sh Scripts/runTropicalExample```
 
-<img src ="images/tropical.png" width ="400>
+<img src ="images/tropical.png" width ="400">
 
 This is a procedural island map generator. It creates realistic, customizable island landscapes for potential use in simulations, visualizations, or games.
 
