@@ -1,13 +1,13 @@
-# Island City Pathfinder
+# Island City and Pathfinder
 Irregular Mesh Example
 
-<img src = "images/irregular.png" width ="600">
+<img src = "images/irregular.png" width ="800">
 
 Tropical Island Example
 
 <img src ="images/tropical.png" width ="400">
 
-This is a procedural island map generator. It creates realistic, customizable island landscapes for potential use in simulations, visualizations, or games.
+This is a procedural island map generator that creates realistic, customizable island landscapes for potential use in simulations, visualizations, or games.
 
 Core Pipeline (3 Main Components):
 ### 1. Mesh Generator
@@ -39,13 +39,13 @@ Regular mode: Shows the island with colors representing terrain/biomes
 Debug mode (-X flag): Shows technical structure - vertices (black), centroids (red), neighbor connections (grey)
 
 ## Pathfinder
-it’s the routing engine to traverse the generated island realistically, with costs you define.
+It’s the routing engine to traverse the generated island realistically, with costs you define.
 
 Purpose: Implements Dijkstra’s shortest-path algorithm to compute optimal routes between nodes.
 What it’s for here: Routing on the island graph (e.g., between polygon centroids or city locations), where edge weights can encode terrain costs (e.g., water = high cost, roads = low cost), distance, or other penalties.
 
 #### Typical uses on this project:
-Roads: Connect cities/Points of intersection with least-cost routes across the island.
+Roads: Connect cities/Points of intersection with the least-cost routes across the island.
 Analysis: Compute service reachability, minimum spanning-like corridors (iterating shortest paths).
 
 # Here's the simplest way to run and see results:
@@ -62,9 +62,9 @@ After installation, you'll find an application named `generator.jar` in the `gen
 cd generator
 java -jar generator.jar sample.mesh -grid [-width] [-height] [-spacing]
 ```
-`width` and `height` default is 500px while `spacing` default is 20 and are optional to change in the command line. Note that the minimum spacing is 10. 
+`width` and `height` default is 500px, while `spacing` default is 20 and are optional to change in the command line. Note that the minimum spacing is 10. 
 
-Example: `java -jar generator.jar sample.mesh -grid -width 350 -height 350`
+Example: `java -jar generator.jar sample.mesh -grid -width 350 -height 350.`
 
 #### Irregular Mesh Generation
 ```
@@ -72,27 +72,27 @@ cd generator
 java -jar generator.jar sample.mesh -irregular -numPoly [-width] [-height] [-relation]
 ```
 `numPoly` is the number of polygons to generate on the mesh.\
-`width` and `height` default is 500px and are optional to change in the command line. \
-`relation` default is 1 and value can be changed for any values greater than 1 to smooth the mesh.
+`width` and `height` default to 500px and are optional to change in the command line. \
+`relation` default is 1, and the value can be changed for any values greater than 1 to smooth the mesh.
 
-Example: `java -jar generator.jar sample.mesh -irregular -numPoly 500 -width 600 -height 600 -relation 3`
+Example: `java -jar generator.jar sample.mesh -irregular -numPoly 500 -width 600 -height 600 -relation 3.`
 
 
 ## step 3: Create an island (add terrain, water, biomes)
 Generates a map based on input mesh and command line arguments. 
 
 #### Sandbox 
-To run sandbox mode of the island generator, go to the `island` directory, and use `java -jar` to run the product. Use the mesh created by the generator as input mesh and enter .mesh file name to save the island generated map.  
+To run the sandbox mode of the island generator, go to the `island` directory and use `java -jar` to run the product. Use the mesh created by the generator as the input mesh and enter .mesh file name to save the island-generated map.  
 
 ```
 cd island
 java -jar island.jar -input (input.mesh) -output (output.mesh) --mode sandbox
 ```
 
-Example: `java -jar island.jar -i ../generator/sample.mesh -o sandbox.mesh --mode sandbox`
+Example: `java -jar island.jar -i ../generator/sample.mesh -o sandbox.mesh --mode sandbox.`
 
 #### Regular
-To run the regular mode of the island generator, go to the `island` directory, and use `java -jar` to run the product. Use the mesh created by the generator as input mesh and enter .mesh file name to save the island generated map.  
+To run the regular mode of the island generator, go to the `island` directory, and use `java -jar` to run the product. Use the mesh created by the generator as the input mesh and enter .mesh file name to save the island-generated map.  
 
 ```
 cd island
@@ -102,7 +102,7 @@ java -jar island.jar -input (input.mesh) -output (output.mesh) --mode regular -s
 Example: `java -jar island.jar -i ../generator/regular.mesh -o desert.mesh --mode regular --shape irregular --altitude hills --biomes desert --lakes 2 --rivers 2 -soil dry --aquifers 2 -seed -2116125981790618405`
 
 `shape`: General shape of the island: {circle, rectangle, oval, irregular, random}.\
-`altitude` : The altitude behaviour of the island: {volcanic, cliff, hills, flat, random}.\
+`altitude`: The altitude behaviour of the island: {volcanic, cliff, hills, flat, random}.\
 `biomes`: General biome to use for the whole map: {arctic, tropical, temperate, desert}.\
 `lakes`: Maximum number of lakes in the island: (positive integer).\
 `rivers`: Maximum number of rivers in the island: (positive integer).\
@@ -110,27 +110,27 @@ Example: `java -jar island.jar -i ../generator/regular.mesh -o desert.mesh --mod
 `aquifers`: Number of aquifers to generate on the island: (positive integer).\
 `seed`: Seed to use for all random variables: (long type)
 
-## Step 4: Visualize it (create an image you can view)
-To visualize an existing mesh, go the the `visualizer` directory, and use `java -jar` to run the product. The product takes in the file containing the mesh, and the name of the file to store the visualization (as an SVG image).
+## Step 4: Visualise it (create an image you can view)
+To visualize an existing mesh, go to the `visualizer` directory and use `java -jar` to run the product. The product takes in the file containing the mesh, and the name of the file to store the visualization (as an SVG image).
 
 ```
 cd visualizer 
 java -jar visualizer.jar ../generator/sample.mesh sample.svg [-X]
 ls -lh sample.svg
 ```
-To viualize the SVG file:
+To visualise the SVG file:
 
   - Open it with a web browser
   - Convert it into something else with tool slike `rsvg-convert`
 
 ### Debug Visualizer
-In debug mode, it will visualize the polygon's segments and vertices as black, centroid as red and neighbouring relations as grey. Debug mode uses the flag `-X`
+In debug mode, it will visualize the polygon's segments and vertices as black, the centroid as red and neighbouring relations as grey. Debug mode uses the flag `-X`
  ```
  java -jar visualizer.jar ../generator/sample.mesh sample.svg -X
  ```
 
 ### Example runs
-To see a examples of the mesh, run any one of the scripts below in the main directory. 
+To see an example of the mesh, run any one of the scripts below in the main directory. 
 
 ```sh Scripts/runAll```
 
