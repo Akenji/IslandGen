@@ -1,4 +1,11 @@
 # Island City Pathfinder
+```sh Scripts/runAllIrregular```
+
+![My Image](images/irregular.png)
+```sh Scripts/runTropicalExample```
+
+![My Image](images/tropical.png)
+
 This is a procedural island map generator. It creates realistic, customizable island landscapes for potential use in simulations, visualizations, or games.
 
 Core Pipeline (3 Main Components):
@@ -142,7 +149,7 @@ sh Scripts/runSandbox - Simple sandbox mode
 sh Scripts/runTemperateExample - Temperate forest island
 The output SVG files will be created in the visualizer directory. Just open them in a browser to see your generated islands!
 
-
+<!--
 #### HeatMaps
 
 ```
@@ -189,9 +196,6 @@ The following graphs are the Whittaker diagrams used in this project. Note: Thes
 
 ![My Image](images/gridDebug.png)
 
-```sh Scripts/runAllIrregular```
-
-![My Image](images/irregular.png)
 
 ```sh Scripts//runAllDebugIrregular```
 
@@ -205,9 +209,7 @@ The following graphs are the Whittaker diagrams used in this project. Note: Thes
 
 ![My Image](images/arctic.png)
 
-```sh Scripts/runTropicalExample```
 
-![My Image](images/tropical.png)
 
 ```sh Scripts/runTemperateExample```
 
@@ -220,3 +222,4 @@ The following graphs are the Whittaker diagrams used in this project. Note: Thes
 ```sh Scripts/runTemperateHeatmap```
 
 ![My Image](images/heatmap.png)
+-->
