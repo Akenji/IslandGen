@@ -1,10 +1,11 @@
 # Island City Pathfinder
 ```sh Scripts/runAllIrregular```
 
-![My Image](images/irregular.png)
+<img src = "images/irregular.png" width ="400">
+
 ```sh Scripts/runTropicalExample```
 
-![My Image](images/tropical.png)
+<img src ="images/tropical.png" width ="400>
 
 This is a procedural island map generator. It creates realistic, customizable island landscapes for potential use in simulations, visualizations, or games.
 
