@@ -1,0 +1,97 @@
+@startuml
+package "Graph" {
+    abstract class GraphADT<T> {
+        # nodes: List<Node<T>>
+        # edges: List<Edge<T>>
+        # adjacencyList: Map<Node<T>, ArrayList<Edge<T>>>
+        + GraphADT()
+        +{abstract} addNode(node: Node<T>): void
+        +{abstract} addEdge(n1: Node<T>, n2: Node<T>, weight: double, properties: Map<String, Object>): void
+        +{abstract} getEdgeWeight(n1: Node<T>, n2: Node<T>): double
+        + getNode(id: T): Node<T>
+        + getNodes(): List<Node<T>>
+        + getEdges(): List<Edge<T>>
+        + getConnectedEdges(source: Node<T>): List<Edge<T>>
+    }
+
+    class Node<T> {
+      - id: T
+      - isVisited: boolean
+      - properties: Map<String, Object>
+      - cost: double
+      + Node(id: T)
+      + compareTo(otherNode: Node<T>): int
+      + getId(): T
+      + setCost(cost: double): void
+      + getCost(): double
+      + setProperty(property: String, value: Object): void
+      + getPropertyValue(property: String): Object
+      + hasProperty(property: String): boolean
+      + setVisited(visited: boolean): void
+      + isVisited(): boolean
+    }
+
+    class Edge<T> {
+      - node: Node<T>
+      - weight: double
+      - properties: Map<String, Object>
+      + Edge(node: Node<T>, weight: double)
+      + getNode(): Node<T>
+      + getWeight(): double
+      + setProperty(property: String, value: Object): void
+      + getPropertyValue(property: String): Object
+    }
+
+    class UndirectedGraph<T> {
+      + addNode(node: Node<T>): void
+      + addEdge(n1: Node<T>, n2: Node<T>, weight: double): void
+      + addEdge(n1: Node<T>, n2: Node<T>, weight: double, properties: Map<String, Object>): void
+      + getEdgeWeight(n1: Node<T>, n2: Node<T>): double
+    }
+}
+
+package "PathFinder" {
+    interface Path<T> {
+      + findPath(graph: GraphADT<T>, source: Node<T>, target: Node<T>): List<Node<T>>
+    }
+
+    class ShortestPath<T> {
+      - parentNodes: Map<Node<T>, Node<T>>
+      - path: List<Node<T>>
+      - queue: PriorityQueue<Node<T>>
+      + ShortestPath()
+      + findPath(graph: GraphADT<T>, source: Node<T>, target: Node<T>): List<Node<T>>
+      - getPath(parentNodes: Map<Node<T>, Node<T>>, sourceNode: Node<T>, targetNode: Node<T>): List<Node<T>>
+    }
+}
+
+package "java.lang" {
+    interface Comparable<T> {
+        + compareTo(obj: Object): int
+    }
+}
+
+package "java.util" {
+    class PriorityQueue<T> {
+        + add(e: E): boolean
+        + isEmpty(): boolean
+        + poll(): E
+    }
+}
+
+GraphADT <|-- UndirectedGraph
+GraphADT "1" o-- "*" Node
+GraphADT "1" o-- "*" Edge
+UndirectedGraph "1" o-- "*" Node
+UndirectedGraph "1" o-- "*" Edge
+Edge "1" *-- "1" Node
+Path <|.. ShortestPath
+Comparable <|.. Node
+GraphADT <.. Path
+Node <.. Path
+Edge <.. ShortestPath
+Node <.. ShortestPath
+GraphADT <.. ShortestPath
+PriorityQueue <.. ShortestPath
+
+@enduml

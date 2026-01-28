@@ -1,0 +1,9 @@
+cd generator
+java -jar generator.jar regular.Mesh -i -np 500 -relation 25 -wth 500 -hth 500
+cd ..
+cd island
+java -jar island.jar -i ../generator/regular.mesh -o temperate.mesh --mode heatmap --shape circle --altitude volcanic --biomes temperate --lakes 5 --rivers 15 -soil dry --aquifers 5
+cd ..
+cd visualizer
+java -jar visualizer.jar ../island/temperate.mesh temperateHeat.svg
+cd ..

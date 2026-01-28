@@ -1,0 +1,9 @@
+cd generator
+java -jar generator.jar sandbox.Mesh -i -np 1500 -relation 25 -wth 500 -hth 500
+cd ..
+cd island
+java -jar island.jar -i ../generator/sandbox.mesh -o sandbox.mesh --mode sandbox
+cd ..
+cd visualizer
+java -jar visualizer.jar ../island/sandbox.mesh sandbox.svg
+cd ..

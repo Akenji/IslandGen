@@ -1,0 +1,414 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+participant " "
+participant IslandCommandLineReader
+
+->" ":main(String[] args)
+activate " "
+
+create IslandCommandLineReader
+" " -> IslandCommandLineReader
+IslandCommandLineReader->IslandCommandLineReader:super()
+activate IslandCommandLineReader
+
+IslandCommandLineReader->IslandCommandLineReader:createOptions()
+activate IslandCommandLineReader
+deactivate IslandCommandLineReader
+IslandCommandLineReader->IslandCommandLineReader:checkOptions(args)
+activate IslandCommandLineReader
+deactivate IslandCommandLineReader
+
+create RandomGenerator
+alt "seed==null"
+IslandCommandLineReader->RandomGenerator:RandomGenerator()
+RandomGenerator-->IslandCommandLineReader
+else
+IslandCommandLineReader->RandomGenerator:RandomGenerator(seed)
+RandomGenerator-->IslandCommandLineReader
+end
+
+deactivate IslandCommandLineReader
+IslandCommandLineReader --> " "
+
+create MeshFactory
+" " -> MeshFactory: MeshFactory()
+MeshFactory --> " "
+" " -> MeshFactory: write()
+activate MeshFactory
+MeshFactory -> IslandCommandLineReader: generateFromInputs()
+activate IslandCommandLineReader
+
+create RunMode
+IslandCommandLineReader -> RunMode
+deactivate IslandCommandLineReader
+activate RunMode
+create Mode
+    alt "isSandBoxMode()"
+    create Sandbox
+    RunMode -> Sandbox
+    Sandbox -> Mode: super()
+    activate Mode
+    Mode --> Sandbox
+    deactivate Mode
+    Sandbox -> Mode:extractInformation()
+    activate Mode
+    Mode --> Sandbox
+    deactivate Mode
+    Sandbox --> RunMode
+        RunMode -> Sandbox:generate()
+        activate Sandbox
+        create Circle
+        Sandbox -> Circle: new Circle() outerCircle
+        Circle --> Sandbox
+        Sandbox -> Circle:outerCircle.getOutofRangeTiles()
+        activate Circle
+        Circle --> Sandbox
+        deactivate Circle
+        Sandbox -> Circle:outerCircle.getInRangeTiles()
+        loop all out of range tiles
+            Create Ocean
+            Sandbox -> Ocean:new Ocean()
+            activate Sandbox
+            Ocean --> Sandbox
+            deactivate Sandbox
+        end
+        activate Circle
+        Circle --> Sandbox
+        deactivate Circle
+        Sandbox -> Circle: new Circle() innerCircle
+        Circle --> Sandbox
+        Sandbox -> Circle:innerCircle.getOutofRangeTiles()
+        activate Circle
+        Circle --> Sandbox
+        deactivate Circle
+        Sandbox -> Circle:innerCircle.getInRangeTiles()
+        activate Circle
+        Circle --> Sandbox
+        deactivate Circle
+
+        Sandbox -> Sandbox: Set lagoon type
+        activate Sandbox
+        deactivate Sandbox
+
+        Sandbox -> Sandbox: Set grassland type
+        activate Sandbox
+        deactivate Sandbox
+
+        Sandbox -> Altitude: SetElevation() land
+        activate Altitude
+        Altitude --> Sandbox
+        deactivate Altitude
+
+        Sandbox -> Altitude: SetElevation() ocean
+        activate Altitude
+        Altitude --> Sandbox
+        deactivate Altitude
+
+        Sandbox -> Altitude: SetElevation() lagoon
+        activate Altitude
+        Altitude --> Sandbox
+        deactivate Altitude
+
+        Sandbox -> Sandbox: determineBeachLand()
+        activate Sandbox
+        deactivate Sandbox
+
+        Sandbox --> RunMode
+        deactivate Sandbox
+
+    RunMode -> Sandbox:getMesh()
+    activate Sandbox
+    Sandbox --> RunMode
+    deactivate Sandbox
+else "isRegularMode()"
+    create Regular
+    RunMode -> Regular
+        Regular -> Mode: super()
+        activate Mode
+        Mode --> Regular
+        deactivate Mode
+        Regular -> Mode:extractInformation()
+        activate Mode
+        Mode --> Regular
+        deactivate Mode
+    Regular --> RunMode
+    RunMode -> Regular:generate()
+    activate Regular
+        create Shape
+        Regular -> Shape
+        Shape --> Regular
+        Regular -> Shape: getOutOfRangeTiles()
+        activate Regular
+        activate Shape
+        Shape --> Regular
+        deactivate Regular
+        Deactivate Shape
+                Regular -> Shape: getInRangeTiles()
+                activate Regular
+                activate Shape
+                Shape --> Regular
+                deactivate Regular
+                Deactivate Shape
+        loop all out of range tiles
+            Regular -> Ocean:new Ocean()
+            activate Regular
+            Ocean --> Regular
+            deactivate Regular
+        end
+        create LakeGenerator
+        Regular ->LakeGenerator: new LakeGenerator()
+        LakeGenerator --> Regular
+
+        Regular -> LakeGenerator:.generate()
+        activate LakeGenerator
+        LakeGenerator -> LakeGenerator: determineLakeTiles()
+        activate LakeGenerator
+        deactivate LakeGenerator
+                loop numLakes loops
+                    Create Lake
+                    LakeGenerator -> Lake:createLake()
+                    activate LakeGenerator
+                    Lake --> LakeGenerator
+                    deactivate LakeGenerator
+                end
+        deactivate LakeGenerator
+
+        LakeGenerator -->Regular
+        Deactivate LakeGenerator
+        Regular -> LakeGenerator:.getRemainingTiles()
+        activate Regular
+        activate LakeGenerator
+        LakeGenerator -->Regular
+        deactivate Regular
+        Deactivate LakeGenerator
+
+        Regular -> LakeGenerator:.getLakes()
+        activate Regular
+        activate LakeGenerator
+        LakeGenerator -->Regular
+        deactivate Regular
+        Deactivate LakeGenerator
+
+        Regular -> Altitude:SetAll()
+        activate Altitude
+        Altitude -> Altitude: SetElevation()
+        activate Altitude
+        deactivate Altitude
+        Altitude -> Altitude: LevelLand()
+        activate Altitude
+        deactivate Altitude
+        Altitude -> Altitude: setLakes()
+        activate Altitude
+        deactivate Altitude
+        Altitude --> Regular
+        deactivate Altitude
+
+        create RiverGenerator
+        Regular ->RiverGenerator: new RiverGenerator()
+        RiverGenerator --> Regular
+
+        Regular -> RiverGenerator:.generate()
+        activate RiverGenerator
+        create River
+        loop maxNumRivers times
+                RiverGenerator -> River: new River()
+                activate RiverGenerator
+                River -> River:extendRiver()
+                activate River
+                River -> River:createEndorheicLake()
+                activate River
+                deactivate River
+                deactivate River
+                River -->RiverGenerator
+                deactivate RiverGenerator
+        end
+        RiverGenerator -->Regular
+        Deactivate RiverGenerator
+
+        Regular -> RiverGenerator:.getRivers()
+        activate Regular
+        activate RiverGenerator
+        RiverGenerator -->Regular
+        deactivate Regular
+        Deactivate RiverGenerator
+
+        Regular -> RiverGenerator:.getEndorheicLakes()
+        activate Regular
+        activate RiverGenerator
+        RiverGenerator -->Regular
+        deactivate Regular
+        Deactivate RiverGenerator
+
+        Regular -> Altitude:setLakes()
+        activate Altitude
+        Altitude --> Regular
+        deactivate Altitude
+
+        Regular -> RiverGenerator:.getRemainingTiles()
+        activate Regular
+        activate RiverGenerator
+        RiverGenerator -->Regular
+        deactivate Regular
+        Deactivate RiverGenerator
+
+        create BeachGenerator
+        Regular ->BeachGenerator: new BeachGenerator()
+        BeachGenerator --> Regular
+
+        Regular -> BeachGenerator:.generate()
+        activate BeachGenerator
+        BeachGenerator -->Regular
+        Deactivate BeachGenerator
+
+        Regular -> BeachGenerator:.getRemainingTiles()
+        activate Regular
+        activate BeachGenerator
+        BeachGenerator -->Regular
+        deactivate Regular
+        Deactivate BeachGenerator
+
+        create GeneralBiome
+        Regular ->GeneralBiome: .getGeneralBiome()
+        GeneralBiome --> Regular
+
+        Regular -> Temperature: setTemperature()
+        activate Temperature
+
+        Temperature --> Regular
+        deactivate Temperature
+
+        loop all undetermined tiles
+            Create Land
+            Regular -> Land:new Land()
+            activate Regular
+            Land --> Regular
+            deactivate Regular
+        end
+
+        create AquiferGenerator
+        Regular ->AquiferGenerator: new AquiferGenerator()
+        AquiferGenerator --> Regular
+
+        Regular -> AquiferGenerator:.createAquifers()
+        activate AquiferGenerator
+        loop numAquifers
+            Create Aquifer
+            AquiferGenerator -> Aquifer:new Aquifer()
+            activate AquiferGenerator
+            Aquifer --> AquiferGenerator
+            deactivate AquiferGenerator
+        end
+        AquiferGenerator -->Regular
+        Deactivate AquiferGenerator
+
+        Regular -> AquiferGenerator:.getAquifers()
+        activate Regular
+        activate AquiferGenerator
+        AquiferGenerator -->Regular
+        deactivate Regular
+        Deactivate AquiferGenerator
+
+
+        Regular -> Humidity: setHumidity()
+        activate Humidity
+        Humidity --> Regular
+        deactivate Humidity
+
+        Regular ->GeneralBiome: .createWhittakerDiagram()
+        activate GeneralBiome
+        activate Regular
+        GeneralBiome --> Regular
+        deactivate GeneralBiome
+        deactivate Regular
+
+        loop all land tiles
+            Regular -> GeneralBiome:.getTileBiome()
+            activate GeneralBiome
+            activate Regular
+            GeneralBiome --> Regular
+            deactivate Regular
+            deactivate GeneralBiome
+        end
+
+        Regular -> Humidity: setHumidityColors()
+        activate Humidity
+        Humidity --> Regular
+        deactivate Humidity
+
+
+
+
+
+
+
+
+
+
+
+
+
+    Regular --> RunMode
+    deactivate Regular
+    RunMode -> Regular:getMesh()
+    activate Regular
+    Regular --> RunMode
+    deactivate Regular
+else "isHeatmapMode()"
+    create HeatMap
+    RunMode -> HeatMap
+        HeatMap -> Regular: super()
+                activate Regular
+                Regular -> Mode: super()
+                activate Mode
+                Mode --> Regular
+                deactivate Mode
+                Regular -> Mode:extractInformation()
+                activate Mode
+                Mode --> Regular
+                deactivate Mode
+        Regular --> HeatMap
+        deactivate Regular
+        HeatMap -> Regular: super.generate()
+        activate Regular
+        Regular --> HeatMap
+        deactivate Regular
+        HeatMap -> HeatMap: setProperties()
+        activate HeatMap
+        deactivate HeatMap
+    HeatMap --> RunMode
+    RunMode -> HeatMap:getMesh()
+    activate HeatMap
+    HeatMap --> RunMode
+    deactivate HeatMap
+    RunMode --> IslandCommandLineReader: getMesh()
+    deactivate RunMode
+end
+
+
+
+deactivate IslandCommandLineReader
+
+IslandCommandLineReader --> MeshFactory
+
+
+MeshFactory -> IslandCommandLineReader: getOutputMeshFile()
+activate IslandCommandLineReader
+IslandCommandLineReader --> MeshFactory
+deactivate IslandCommandLineReader
+
+MeshFactory -->" "
+
+deactivate MeshFactory
+
+
+create Altitude
+create Temperature
+create Humidity
+
+
+
+
+
+
+@enduml

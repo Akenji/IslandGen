@@ -1,0 +1,447 @@
+@startuml Island
+scale max 2000 width
+scale max 800 height
+scale 0.25
+class Main{
++void main(String[] args)
+}
+
+abstract class CommandLineReader
+
+class IslandCommandLineReader{
+- String inputMeshFile
+- String outputMeshFile
+- ModeType mapMode
+- AltitudeType altitude
+- ShapeType shapeToUse
+- BiomeTypes generalBiome
+- SoilTypes generalSoil
+- int maxNumLakes
+- int maxNumRivers
+- int numAquifers
+- Options options
+- RandomGenerator randomGenerator
++ IslandGenerator(String[]: args)
++ void createOptions()
++ void checkOptions(String[]: args)
++ Mesh generateFromInputs()
+}
+
+package "TilesTypes"{
+enum TileElement{
+WATER
+LAND
+UNDERTERMINED
+}
+
+enum TileTypes{
+UNDERMINEDLAND
+BEACH
+OCEAN
+LAGOON
+LAKE
+GRASSLAND
+ENDORHEICLAKE
+ICE 
+SNOW
+TAIGA
+TUNDRA
+RAINDFOREST
+SWAP
+MUD
+SAND
+DIRT
+SAVANNA
+CLAY
+ROCK
+FOREST
+}
+enum VertexElement{
+WATER
+LAND
+}
+TileTypes --> TileElement
+}
+
+package Terrains{
+interface Generator{
++ void generate()
+}
+}
+
+package Terrains.WaterTerrains{
+class Aquifer{
++ Aquifer(Tile: aquiferTile)
+}
+
+class AquiferGenerator{
++ AquiferGenerator(List<Tile>: tiles, int: numAquifers)
++ void createAquifers()
++ List<Aquifer> getAquifers()
+}
+
+abstract class BodiesWater{
+~ Double humidity_level
++ Double getHumidityLevel()
++ List<TileVertex> getMidPoints()
+}
+
+class Lake{
++ Lake(List<Tile> lakeTiles)
+}
+
+class LakeGenerator{
++ LakeGenerator(int: maxNumLakes, List<tile>: undecidedTiles)
++ void generate()
+- Lake createLake(List<Tile>: undecidedTiles, int: maxLakeSize)
+- void determineLakeTiles()
+}
+
+class Ocean {
++ Ocean(Tile: tile)
+}
+
+class River{
++ River(TileVertex: riverStart)
++ void addRiverVertex(TileVertex: riverVertex)
++ void addRiverSegment(TileSegment: riverSegment)
++ Boolean canAddVertexToRiver(TileVertex: vertex)
+}
+
+class RiverGenerator{
++ RiverGenerator(List<Tile>:tiles, int: maxRivers)
++ void generate()
++ void extendRiver()
++ void createEndorheicLake(River: river, TileVertex: previousRiverVertex)
+}
+}
+
+package Terrains.LandTerrains{
+class BeachGenerator{
++ BeachGenerator(Boolean: createBeachers, List<Tile>: underminedTiles)
++ void generate()
+}
+
+class Land{
++ Land(Tile: landTile)
+}
+
+enum LandComposition{
+SOIL
+NOTSOIL
+}
+}
+
+package Temperature{
+class Temperature{
++ Temperature()
+}
+}
+
+package SoilProfile{
+class Humidity{
++ Double calculateDistance(TileVertex: v1, TileVertex v2)
+- Color newColor(Color c, Double averageHumidity)
+}
+enum SoilTypes{
+WET
+HUMID
+DRY
++ String toString()
+}
+}
+
+package Shape{
+enum ShapeType{
+CIRCLE
+RECTANGLE
+OVAL
+RANDOM
+IRREGULAR
++ String toString()
+- ShapeType(String: name)
+}
+
+abstract class Shape{
++ Shape()
+}
+
+class Circle{
++ Circle (double: width, double: height, List<Tile>: tiles)
++ Circle (double: width, double: height, double: centerX, double: centerY, List<Tile>: tiles)
++ void markTiles()
+}
+
+class Irregular{
++ Irregular(double: width, double: height, List<Tile>: tiles)
+- void generateBaseIsland()
++ void markTiles()
+}
+
+
+class Oval{
++ Oval(double: width, double: height, List<Tile>: tiles)
++ Oval(double: width, double: height, double: angleRad, List<Tile>: tiles)
++ void markTiles()
+}
+
+class RandomShape{
++ RandomShape(double: width, double: height, List<Tile>: tiles)
++ Oval(double: width, double: height, double: angleRad, List<Tile>: tiles)
++ void markTiles()
+}
+
+class Rectangle{
++ Rectangle(double: width, double: height, List<Tile>: tiles)
+- void randomizeCoordinates(double: xUpperBound, double: yUpperBound)
+- void convexhull() 
++ void markTiles()
+}
+}
+
+package Modes {
+enum ModeType{
+SANDBOX
+REGULAR
+HEATMAP
+}
+
+abstract class Mode{
+~ List<Tile> tiles
+~ List<TileSegment> allSegmentInfoList
+~ List<TileSegment> allVerticesInfoList
++ Mode(String: inputMesh, String: outputMesh, ShapeType: shape, AltitudeType: altitude, BiomeTypes: biome, int: maxLakes, SoilTypes: soil)
+# void extractInformation()
+- void extractSegments()
+- void extractVertex()
+- void extractPolygon()
+- void setNeighbouringTiles()
++ abstract void generate()
+}
+
+class Heatmaps{
++ Heatmaps(String: inputMesh, String: outputMesh, ShapeType: shapeType, AltitudeType: altitudeType, BiomeTypes: biome, int: maxLakes, int: maxRivers, SoilTypes: soil, int: numAquifers)
++ void setProperties()
+}
+
+class Regular{
++ Regular(String: inputMesh, String: outputMesh, ShapeType: shapeType, AltitudeType: altitudeType, BiomeTypes: biome, int: maxLakes, int: maxNumRivers, SoilTypes: soil, int: numAquifers)
+}
+
+class Sandbox{
++ Sandbox(String: inputMesh, String: outputMesh)
+- void determineBeachLand(List<Tile> landTiles)
+}
+}
+
+package GeneralBiome{
+abstract class GeneralBiome{
++ GeneralBiome(double: protectedTemperature)
++ abstract void createWhittakerDiagram(double: humidityRange, double: minHumidity, double: temperatureRange, double: minTemperature)
+}
+
+enum BiomeTypes{
+ARCTIC 
+TROPICAL_FOREST
+TEMPERATE_FOREST
+DesignedDomainBorderThickness
+- BiomeTypes(String: name, Boolean: containBeaches)
++ String toString()
+}
+
+class WhittakerDiagram{
++ WhittakerDiagram(double: humidityRange, double: minHumidity, double: temperatureRange, double: minTemperature)
++ void addToWhittakerDiagram(Shape shape, TileTypes biome)
++ TileTypes getBiome(double: humidity, double: temperature)
+}
+
+class ArcticGeneralBiome{
++ ArcticGeneralBiome(double: getBaseTemperature)
+}
+
+class DesertGeneralBiome{
++ DesertGeneralBiome(double: getBaseTemperature)
+}
+
+class TropicalRainforestGeneralBiome{
++ TropicalRainforestGeneralBiome(double: getBaseTemperature)
+}
+
+class TemperateForestGeneralBiome{
++ TemperateForestGeneralBiome(double: getBaseTemperature)
+}
+}
+
+package BuildingBlocks{
+class Tile{
++ Tile (Polygon: polygon, List<Segment>: meshSegment, List<Vertex>: meshVertices, int: numPolygons)
+}
+
+interface TileProperties{
++ void setColor(Color: color)
++ void setAverageColor()
+}
+
+class TileSegment{
++ TileSegment(Segment: segment, List<Vertex>: vertices, int: offset)
+- void updateThickness()
+}
+
+class TileVertex{
++ TileVertex(Vertex: vertex)
+}
+}
+
+package Altitude{
+class Altitude{
++ Altitude()
++ void setAll()
++ void levelLand(List<Tile>: tiles)
+}
+
+interface AltitudeFuction{
+~ Double valueAt(Double: x, Double: y)
+}
+
+enum AltitudeType{
+VOLCANIC
+WATER
+CLIFF
+HILLS
+FLAT 
+RANDOM 
++ String toString()
+}
+
+interface LandAltitude{
++ AltitudeFunction getFunction()
+}
+
+class Cliff{}
+class Flat{}
+class Hills{}
+class Random{}
+class Volcanic{}
+
+interface WaterAltitude{
++ AltitudeFunction getFunction(List<Tile> tiles)
++ void findElevation()
+}
+
+class Water{}
+}
+
+class RunMode{
+- RunMode()
+}
+
+TileTypes --> LandComposition
+Main "0...1"*--> "1" MeshFactory
+Main "0...1"*--> "1" IslandCommandLineReader
+IslandCommandLineReader "1" *--> "1" RunMode
+RunMode "0...1"*--> "1" Sandbox
+RunMode "0...1"*--> "1" Regular
+RunMode "0...1"*--> "1" Heatmaps
+Mode <|-- Sandbox
+Mode <|-- Regular
+Regular <|-- Heatmaps
+Mode "0...1"*--> "*" Tile
+Mode "0...1"*--> "*" TileSegment
+Mode "0...1"*--> "*" TileVertex
+Sandbox ..> Tile
+Sandbox "0...1"*--> "1" Circle
+Sandbox --> TileTypes
+IslandCommandLineReader --> SoilTypes
+IslandCommandLineReader --> BiomeTypes
+IslandCommandLineReader --> ModeType
+IslandCommandLineReader --> AltitudeType
+IslandCommandLineReader --> ShapeType
+Mode --> SoilTypes
+Mode --> BiomeTypes
+Mode --> AltitudeType
+Mode --> ShapeType
+BodiesWater <|-- Aquifer
+BodiesWater <|-- Lake
+BodiesWater <|-- Ocean
+BodiesWater <|-- River
+Regular "0...1"*--> "1" Shape
+Regular "0...1"*--> "1" LakeGenerator
+Regular "0...1"*--> "1" RiverGenerator
+Regular "0...1"*--> "1" Temperature
+Regular ..> Tile
+Regular --> TileTypes
+Regular "0...1"*--> "1" BeachGenerator
+Regular "0...1"*--> "*" Ocean
+Regular "0...1"*--> "1" AquiferGenerator
+Regular ..> GeneralBiome
+Regular "0...1"*--> "*" Land
+Generator <|.. LakeGenerator
+Generator <|.. RiverGenerator
+Generator <|.. BeachGenerator
+Generator <|.. AquiferGenerator
+Generator <|.. LakeGenerator
+RiverGenerator "0...1"*--> "*" River
+RiverGenerator "0...1"*--> "*" Lake
+LakeGenerator "0...1"*--> "*" Lake
+AquiferGenerator "0...1"*--> "*" Aquifer
+Land --> SoilTypes
+Land --> LandComposition
+Humidity "0...1"*--> "*" Land
+Humidity "0...1"*--> "*" BodiesWater
+Shape <|-- Circle
+Shape <|-- Irregular
+Shape <|-- Oval
+Shape <|-- RandomShape
+Shape <|-- Rectangle
+ShapeType  "0...1"*--> "1" Circle
+ShapeType  "0...1"*--> "1" Irregular
+ShapeType  "0...1"*--> "1" Oval
+ShapeType  "0...1"*--> "1" RandomShape
+ShapeType  "0...1"*--> "1" Rectangle
+RandomShape  "0...1"*--> "1" JTS
+Irregular  "0...1"*--> "1" JNoise
+BiomeTypes "0...1" *--> "1" ArcticGeneralBiome
+BiomeTypes "0...1" *--> "1" DesertGeneralBiome
+BiomeTypes "0...1" *--> "1" TropicalRainforestGeneralBiome
+BiomeTypes "0...1" *--> "1" TemperateForestGeneralBiome
+GeneralBiome <|-- ArcticGeneralBiome
+GeneralBiome <|-- DesertGeneralBiome
+GeneralBiome <|-- TropicalRainforestGeneralBiome
+GeneralBiome <|-- TemperateForestGeneralBiome
+GeneralBiome "0...1"*--> "1" WhittakerDiagram
+ExtractPolygonInfo <|-- Tile
+ExtractSegmentInfo <|-- TileSegment
+ExtractVertexInfo <|-- TileVertex
+Tile --> TileElement
+Tile --> TileTypes
+Tile --> LandComposition
+Tile ..> io.Structs
+TileSegment ..> io.Structs
+TileVertex ..> io.Structs
+Tile "0...1"*--> "1" TileSegment
+Tile "0...1"*--> "1" TileVertex
+Altitude --> Lake
+WaterAltitude <|.. Water
+LandAltitude <|.. Cliff
+LandAltitude <|.. Hills
+LandAltitude <|.. Flat
+LandAltitude <|.. Volcanic
+LandAltitude <|.. Random
+Cliff "0...1"*--> "1" AltitudeFuction
+Flat "0...1"*--> "1" AltitudeFuction
+Hills "0...1"*--> "1" AltitudeFuction
+Volcanic "0...1"*--> "1" AltitudeFuction
+Random "0...1"*--> "1" AltitudeFuction
+flat "0...1"*--> "1" JNoise
+Irregular "0...1"*--> "1" JNoise
+AltitudeType "0...1"*--> "1" Cliff
+AltitudeType "0...1"*--> "1" Flat
+AltitudeType "0...1"*--> "1" Hills
+AltitudeType "0...1"*--> "1" Volcanic
+AltitudeType "0...1"*--> "1" Random
+
+skinparam linetype ortho
+
+
+CommandLineReader <|-- IslandCommandLineReader
+@enduml

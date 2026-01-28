@@ -1,0 +1,11 @@
+mvn install
+cd generator
+java -jar generator.jar sample.Mesh -i -np 500 -relation 25 -wth 500 -hth 500
+ls -lh sample.mesh
+cd ..
+cd island
+java -jar island.jar -i ../generator/sample.mesh -o sandbox.mesh --mode regular --shape circle --altitude volcanic --biomes temperate --lakes 3 --rivers 15 -soil humid --aquifers 5 --cities 100
+cd ..
+cd visualizer
+java -jar visualizer.jar ../island/sandbox.mesh sample.svg
+ls -lh sample.svg
